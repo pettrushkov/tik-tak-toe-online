@@ -2,7 +2,7 @@ import Image from "next/image";
 import logoSrc from "./logo.svg";
 import avatarSrc from "./avatar.png";
 
-export default function Header() {
+export function Header() {
   return (
     <header className="flex h-24 items-center px-8 bg-white shadow-lg">
       <Image src={logoSrc} alt="logo" />
