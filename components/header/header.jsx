@@ -14,7 +14,7 @@ export function Header() {
         Play
       </UiButton>
       <button className=" ml-auto flex items-center gap-2 text-start text-teal-600">
-        <Profile avatarSrc={avatarSrc} />
+        <Profile avatarSrc={avatarSrc} name="DenP" rating="1234" />
         <ArrowDownIcon />
       </button>
     </header>
