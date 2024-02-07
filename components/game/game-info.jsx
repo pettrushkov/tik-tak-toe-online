@@ -7,6 +7,7 @@ import avatarSrc1 from "./images/avatar1.png";
 import avatarSrc2 from "./images/avatar2.png";
 import avatarSrc3 from "./images/avatar3.png";
 import avatarSrc4 from "./images/avatar4.png";
+import { useEffect, useState } from "react";
 
 const players = [
   {
@@ -39,7 +40,7 @@ const players = [
   },
 ];
 
-export function GameInfo({ className }) {
+export function GameInfo({ className, playersCount, currentMove }) {
   return (
     <div
       className={clsx(
@@ -47,18 +48,39 @@ export function GameInfo({ className }) {
         "bg-white rounded-2xl shadow-md px-8 py-4 justify-between grid grid-cols-2 gap-3",
       )}
     >
-      {players.map((player, index) => (
+      {players.slice(0, playersCount).map((player, index) => (
         <PlayerInfo
           playerInfo={player}
           key={player.id}
           isRight={(index + 1) % 2 === 0} // each second item has another element order
+          isTimerRunning={currentMove === player.symbol}
         />
       ))}
     </div>
   );
 }
 
-function PlayerInfo({ playerInfo, isRight }) {
+function PlayerInfo({ playerInfo, isRight, isTimerRunning }) {
+  const [seconds, setSeconds] = useState(60);
+
+  const minutesString = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const secondsString = String(seconds % 60).padStart(2, "0");
+
+  const isDanger = seconds < 10;
+
+  useEffect(() => {
+    if (isTimerRunning) {
+      const interval = setInterval(() => {
+        setSeconds((seconds) => seconds > 0 && seconds - 1);
+      }, 1000);
+
+      return () => {
+        clearInterval(interval);
+        setSeconds(60);
+      };
+    }
+  }, [isTimerRunning]);
+
   return (
     <div
       className={clsx(
@@ -78,7 +100,15 @@ function PlayerInfo({ playerInfo, isRight }) {
         </div>
       </div>
       <div className="h-6 w-px bg-slate-200" />
-      <div className="text-slate-900 text-lg font-semibold">01:08</div>
+      <div
+        className={clsx(
+          "w-16 text-lg font-semibold",
+          isTimerRunning || "text-gray-300",
+          isDanger ? "text-orange-600" : "text-slate-900",
+        )}
+      >
+        {minutesString}:{secondsString}
+      </div>
     </div>
   );
 }
