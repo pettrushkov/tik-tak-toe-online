@@ -40,7 +40,13 @@ const players = [
   },
 ];
 
-export function GameInfo({ className, playersCount, currentMove, isWinner }) {
+export function GameInfo({
+  className,
+  playersCount,
+  currentMove,
+  isWinner,
+  onPlayerTimeOver,
+}) {
   return (
     <div
       className={clsx(
@@ -53,6 +59,7 @@ export function GameInfo({ className, playersCount, currentMove, isWinner }) {
           playerInfo={player}
           key={player.id}
           isRight={(index + 1) % 2 === 0} // each second item has another element order
+          onTimeOver={() => onPlayerTimeOver(player.symbol)}
           isTimerRunning={currentMove === player.symbol && !isWinner}
         />
       ))}
@@ -60,8 +67,10 @@ export function GameInfo({ className, playersCount, currentMove, isWinner }) {
   );
 }
 
-function PlayerInfo({ playerInfo, isRight, isTimerRunning }) {
-  const [seconds, setSeconds] = useState(60);
+function PlayerInfo({ playerInfo, isRight, isTimerRunning, onTimeOver }) {
+  const SECONDS = 6;
+
+  const [seconds, setSeconds] = useState(SECONDS);
 
   const minutesString = String(Math.floor(seconds / 60)).padStart(2, "0");
   const secondsString = String(seconds % 60).padStart(2, "0");
@@ -76,10 +85,17 @@ function PlayerInfo({ playerInfo, isRight, isTimerRunning }) {
 
       return () => {
         clearInterval(interval);
-        setSeconds(60);
+        setSeconds(SECONDS);
       };
     }
   }, [isTimerRunning]);
+
+  useEffect(() => {
+    if (seconds === 0) {
+      onTimeOver();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seconds]);
 
   return (
     <div

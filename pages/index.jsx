@@ -6,11 +6,19 @@ import {
   useGameState,
 } from "../components/game";
 import { Header } from "../components/header";
+import { GameSymbol } from "../components/game/game-symbol";
 
 export default function HomePage() {
-  const [playersCount] = useState(2);
-  const { cells, currentMove, nextMove, handleCellClick, winnerSequence } =
-    useGameState(playersCount);
+  const [playersCount] = useState(4);
+  const {
+    cells,
+    currentMove,
+    nextMove,
+    handleCellClick,
+    winnerSequence,
+    handlePlayerTimeOver,
+    winnerSymbol,
+  } = useGameState(playersCount);
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -21,10 +29,17 @@ export default function HomePage() {
           playersCount={playersCount}
           className="mt-4"
           currentMove={currentMove}
-          isWinner={!!winnerSequence}
+          isWinner={!!winnerSymbol}
+          onPlayerTimeOver={handlePlayerTimeOver}
         />
+        {winnerSymbol && (
+          <div className="my-4">
+            <GameSymbol symbol={winnerSymbol} />
+          </div>
+        )}
         <GameField
           winnerSequence={winnerSequence}
+          winnerSymbol={winnerSymbol}
           playersCount={playersCount}
           className="mt-6"
           cells={cells}
