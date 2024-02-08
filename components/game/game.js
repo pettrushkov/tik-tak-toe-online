@@ -1,5 +1,4 @@
 import { useGameState } from "./use-game-state";
-import styles from "./game.module.css";
 import { GameInfo } from "./game-info";
 import { GameCell } from "./game-cell";
 import { ResetBtn } from "./reset-button";
