@@ -8,8 +8,19 @@ function getNextMove(currentMove, playersCount) {
   return sliceMoveOrder[nextMoveIndex] ?? sliceMoveOrder[0];
 }
 
-function computeWinner(cells, sequenceSize = 5, fieldSize = 19) {
+function computeWinner(cells, sequenceSize = 3, fieldSize = 19) {
   const gap = Math.floor(sequenceSize / 2);
+
+  function compareElements(indexes) {
+    let result = true;
+
+    for (let i = 1; i < indexes.length; i++) {
+      result &&= !!cells[indexes[i]];
+      result &&= cells[indexes[i]] === cells[indexes[i - 1]];
+    }
+
+    return result;
+  }
 
   function getSequenceIndexes(i) {
     const res = [
@@ -31,10 +42,17 @@ function computeWinner(cells, sequenceSize = 5, fieldSize = 19) {
 
   for (let i = 0; i < cells.length; i++) {
     if (cells[i]) {
-      console.log(i);
-      console.log(getSequenceIndexes(i));
+      const indexRows = getSequenceIndexes(i);
+
+      const winnerIndexes = indexRows.find((row) => compareElements(row));
+
+      if (winnerIndexes) {
+        return winnerIndexes;
+      }
     }
   }
+
+  return undefined;
 }
 
 export function useGameState(playersCount) {
@@ -43,7 +61,7 @@ export function useGameState(playersCount) {
     currentMove: GAME_SYMBOLS.CROSS,
   }));
 
-  computeWinner(cells);
+  console.log(computeWinner(cells));
 
   const nextMove = getNextMove(currentMove, playersCount);
 
